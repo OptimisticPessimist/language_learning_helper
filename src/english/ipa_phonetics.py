@@ -14,11 +14,11 @@ class Phonetic:
             self.dict_data: Dict[str, List[str]] = {read_data[i][0]: read_data[i][1:] for i in range(len(read_data))}
 
         with open('./src/english/dict/symbols.tsv', mode='r', newline='', encoding='utf-8') as f:
-            tsv_reader = csv.reader(f, delimiter='\t')
+            tsv_reader = csv.reader(f, delimiter=' ')
             # symbols[i][0]: Arpabet
             # symbols[i][1:]: IPA symbol
             symbols = [row for row in tsv_reader]
-            self.symbols: Dict[str, str] = {symbols[i][0]: str(symbols[i][1:]) for i in range(len(symbols))}
+            self.symbols: Dict[str, str] = {symbols[i][0]: str(symbols[i][1:]).lstrip("'[\'").rstrip("\']'") for i in range(len(symbols))}
 
     def export_html(self, text_post: str) -> str:
         """
@@ -47,21 +47,15 @@ class Phonetic:
 
     def _fetch_phonetics(self, sentences: List[str]) -> List[Tuple[str, str]]:
         words: list = list()
-        phonetics: List[bytes] = list()
-        ipa: str = ""
 
         for word in sentences.strip(";:,.-_").split():
-            word = word.lower()
-            phonetics += self._convert_ipa(self.dict_data[word])
-        for phonetic in phonetics:
-            ipa += phonetic.decode()
-
-        words.append((word, phonetic))
+            phonetics: str = self._convert_ipa(self.dict_data[word.lower()])
+            words.append((word, phonetics))
 
         return words
 
     def _convert_ipa(self, arpabets: List[str]) -> str:
-        phonetics = ""
+        phonetics: str = ""
         for arpabet in arpabets:
             phonetics += self.symbols[arpabet]
 
