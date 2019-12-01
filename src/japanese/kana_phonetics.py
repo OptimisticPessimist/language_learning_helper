@@ -53,7 +53,7 @@ class Phonetic:
         cls.re_kanji = re.compile('[一-龥]')
         cls.re_ascii = re.compile('[!-~]')
 
-    def _fetch_characters(self, sentences: List[str]) -> List[Tuple[str]]:
+    def _fetch_characters(self, sentences: List[str]) -> List[Tuple[str, str]]:
         """
         Convert text to list of originals and Katakana.
 
