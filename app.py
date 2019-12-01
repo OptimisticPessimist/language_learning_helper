@@ -3,7 +3,7 @@ from datetime import date, datetime
 import responder
 import yaml
 
-from src.japanese.add_phonetics import Phonetic
+from src.japanese.kana_phonetics import Phonetic
 
 api = responder.API(
     templates_dir='static/templates',
