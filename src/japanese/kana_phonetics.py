@@ -61,7 +61,7 @@ class Phonetic:
             sentences List[str]: To convert a text
 
         Returns:
-            List[Tuple[str]]: [(original word, katakana), ...]
+            List[Tuple[str, str]]: [(original word, katakana), ...]
         """
         tokens: list = list()
         for sentence in sentences:

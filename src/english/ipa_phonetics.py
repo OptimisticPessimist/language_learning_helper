@@ -46,6 +46,15 @@ class Phonetic:
         return ""
 
     def _fetch_phonetics(self, sentences: List[str]) -> List[Tuple[str, str]]:
+        """
+        Convert text to list of originals and IPAs.
+
+        Args:
+            sentences: List[str]: To convert a text
+
+        Returns:
+            List[Tuple[str, str]: [(original word, IPA), ...]
+        """
         words: list = list()
 
         for word in sentences.strip(";:,.-_").split():
@@ -55,6 +64,15 @@ class Phonetic:
         return words
 
     def _convert_ipa(self, arpabets: List[str]) -> str:
+        """
+        Convert from Arpabet to IPA.
+
+        Args:
+            arpabets(List[str]): target word's Arpabet
+
+        Returns:
+            (str): IPA symbols
+        """
         phonetics: str = ""
         for arpabet in arpabets:
             phonetics += self.symbols[arpabet]
