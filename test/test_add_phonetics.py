@@ -1,7 +1,6 @@
-import requests
 import pytest
 
-import src.add_japanese_ruby as add_phonetic
+import src.japanese.add_phonetics as add_phonetic
 
 
 class TestPhonetic:
