@@ -3,7 +3,7 @@ import pytest
 import src.japanese.kana_phonetics as add_phonetic
 
 
-class TestPhonetic:
+class TestKana:
 
     # yapf: disable
     @pytest.mark.parametrize("text, expected",

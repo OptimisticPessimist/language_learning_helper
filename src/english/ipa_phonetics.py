@@ -6,20 +6,23 @@ class IPA:
     """Add tags of HTML by pronunciations of English"""
 
     def __init__(self):
-        with open('./src/english/dict/cmudict.tsv', mode='r', newline='', encoding='utf-8') as f:
+        with open('./src/english/dict/cmudict', mode='r', newline='', encoding='utf-8') as f:
             tsv_reader = csv.reader(f, delimiter=' ')
             # read_data[i][0]: word
             # read_data[i][1:]: phonetics
             read_data = [row for row in tsv_reader]
             self.dict_data: Dict[str, List[str]] = {read_data[i][0]: read_data[i][1:] for i in range(len(read_data))}
 
-        with open('./src/english/dict/symbols.tsv', mode='r', newline='', encoding='utf-8') as f:
+        with open('./src/english/dict/symbols', mode='r', newline='', encoding='utf-8') as f:
             tsv_reader = csv.reader(f, delimiter=' ')
             # symbols[i][0]: Arpabet
             # symbols[i][1:]: IPA symbol
             symbols = [row for row in tsv_reader]
-            # The data is "'[\'&SYMBOL\']", I only use &SYMBOL. TODO: Refactoring it
-            self.symbols: Dict[str, str] = {symbols[i][0]: str(symbols[i][1:]).lstrip("'[\'").rstrip("\']'") for i in range(len(symbols))}
+            self.symbols: Dict[str, str] = {symbols[i][0]: symbols[i][1:] for i in range(len(symbols))}
+
+        with open('./src/english/dict/vowels', mode='r', newline='', encoding='utf-8') as f:
+            tsv_reader = csv.reader(f, delimiter=' ')
+            self.vowels: List[str] = [vowel for vowel in tsv_reader]
 
     def export_html(self, text_post: str) -> str:
         """
@@ -77,7 +80,7 @@ class IPA:
         """
         phonetics: str = ""
         for arpabet in arpabets:
-            phonetics += self.symbols[arpabet]
+            phonetics += self.symbols[arpabet][0]
 
         return phonetics
 
