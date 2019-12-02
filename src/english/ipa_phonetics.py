@@ -69,16 +69,22 @@ class IPA:
             sentence = reversed(sentence.split())
             for word in sentence:
                 word = word.replace("<br>", "\n")
-                target = word.strip(";:,.?-_<>|#\\\"\'\n")
+                target = word.strip(";:,.!?-_<>[]()|#\\\"\'\n")
                 if target == "":
                     phonetics = ""
                 elif target.lower() == "the" and is_after_vowel:
                     phonetics = "ðiː"
                     is_after_vowel = False
                 else:
-                    phonetics = self._convert_ipa(self.dict_data[target.lower()])
-                    if phonetics.startswith(self.vowels):
-                        is_after_vowel = True
+                    try:
+                        phonetics = self._convert_ipa(self.dict_data[target.lower()])
+                        if phonetics.startswith(self.vowels):
+                            is_after_vowel = True
+                        else:
+                            is_after_vowel = False
+                    except KeyError as e:
+                        print(f"KeyError: {e}")
+                        phonetics = ""
                 words.append((word, phonetics))
             words.append(("<br>\n", ""))
         words.reverse()

@@ -102,8 +102,7 @@ api.add_route('', JapaneseWeb())
 api.add_route('/japanese/furigana', JapaneseWeb())
 api.add_route('/english/ipa', EnglishWeb())
 
-api.add_route('/v1/japanese', JapaneseAPI())
-# api.add_route('/v1/english', EnglishAPI())
+api.add_route('/v1/japanese', JapaneseAPI())  # api.add_route('/v1/english', EnglishAPI())
 
 if __name__ == '__main__':
     from config import setting
