@@ -45,9 +45,10 @@ class IPA:
                 line += word
         sentences.append(line)
 
-        converted = self._fetch_phonetics(sentences)
+        phonetics = self._fetch_phonetics(sentences)
+        converted: List[str] = self._put_on(phonetics)
 
-        return ""
+        return "".join(converted)
 
     def _fetch_phonetics(self, sentences: List[str]) -> List[Tuple[str, str]]:
         """
@@ -64,16 +65,22 @@ class IPA:
         # Remove non ascii characters
         is_after_vowel: bool = False
         phonetics: str = ""
-        for word in reversed(sentences.split()):
-            target = word.strip(";:,.-_")
-            if target.lower() == "the" and is_after_vowel:
-                phonetics = "ðiː"
-                is_after_vowel = False
-            else:
-                phonetics = self._convert_ipa(self.dict_data[target.lower()])
-                if phonetics.startswith(self.vowels):
-                    is_after_vowel = True
-            words.append((word, phonetics))
+        for sentence in sentences:
+            sentence = reversed(sentence.split())
+            for word in sentence:
+                word = word.replace("<br>", "\n")
+                target = word.strip(";:,.?-_<>|#\\\"\'\n")
+                if target == "":
+                    phonetics = ""
+                elif target.lower() == "the" and is_after_vowel:
+                    phonetics = "ðiː"
+                    is_after_vowel = False
+                else:
+                    phonetics = self._convert_ipa(self.dict_data[target.lower()])
+                    if phonetics.startswith(self.vowels):
+                        is_after_vowel = True
+                words.append((word, phonetics))
+            words.append(("<br>\n", ""))
         words.reverse()
         return words
 
@@ -95,4 +102,11 @@ class IPA:
 
     @classmethod
     def _put_on(cls, word_list: List[Tuple[str, str]]) -> List[str]:
-        pass
+        sentences: List[str] = list()
+
+        for word, phonetics in word_list:
+            if phonetics is not "":
+                sentences.append(f'<ruby class="under">{word}<rp>(</rp><rt>{phonetics}</rt><rp>)</rp></ruby> ')
+            else:
+                sentences.append(word)
+        return sentences

@@ -3,6 +3,7 @@ from datetime import date, datetime
 import responder
 import yaml
 
+from src.english.ipa_phonetics import IPA
 from src.japanese.kana_phonetics import Furigana
 
 api = responder.API(
@@ -13,21 +14,22 @@ api = responder.API(
 
 class JapaneseAPI:
     def __init__(self) -> None:
-        self.p = Phonetic()
+        self.furigana = Furigana()
 
     async def on_post(self, req, resp) -> None:
         data: object = await req.media()
         resp.media["success"] = "ok"
         resp.media["text"] = data['raw-text']
-        resp.media["html"] = self.p.export_html(data['text'])
+        resp.media["html"] = self.furigana.export_html(data['text'])
+
 
 class JapaneseWeb:
     def __init__(self) -> None:
-        self.p = Phonetic()
+        self.furigana = Furigana()
 
     def on_get(self, req, resp) -> None:
         raw_text = "樹木希林はFUJIカラーで写せない遠いお正月へ旅立ったよ。"
-        converted_text = self.p.export_html(raw_text)
+        converted_text = self.furigana.export_html(raw_text)
         resp.html = api.template('japanese.html',
                                  raw_text=raw_text,
                                  converted_text=converted_text)
@@ -35,7 +37,7 @@ class JapaneseWeb:
     async def on_post(self, req, resp) -> None:
         data: object = await req.media(format='form')
         raw_text: str = data['raw-text'].replace("<", "&lt").replace(">", "&gt")
-        converted_text = self.p.export_html(raw_text)
+        converted_text = self.furigana.export_html(raw_text)
 
         @api.background.task
         def log():
@@ -53,8 +55,41 @@ class JapaneseWeb:
                                     converted_text=converted_text)
 
 
+class EnglishWeb:
+    def __init__(self) -> None:
+        self.ipa = IPA()
+
+    def on_get(self, req, resp) -> None:
+        raw_text = "I just read the article on the newspaper."
+        converted_text = self.ipa.export_html(raw_text)
+        resp.html = api.template('english.html',
+                                 raw_text=raw_text,
+                                 converted_text=converted_text)
+
+    async def on_post(self, req, resp) -> None:
+        data: object = await req.media(format='form')
+        raw_text: str = data['raw-text'].replace("<", "&lt").replace(">", "&gt")
+        converted_text = self.ipa.export_html(raw_text)
+
+        @api.background.task
+        def log():
+            today = date.today()
+            exec_time = datetime.today()
+            raw = '-'.join(raw_text.splitlines())
+            converted = '-'.join(converted_text.splitlines())
+            with open(f'./logs/{today}.tsv', mode='a',
+                      encoding='utf-8') as log:
+                log.write(f"{exec_time}\t{raw}\t{converted}\n")
+
+        log()
+        resp.content = api.template('english.html',
+                                    raw_text=raw_text,
+                                    converted_text=converted_text)
+
+
 api.add_route('', JapaneseWeb())
-api.add_route('/', JapaneseWeb())
+api.add_route('/japanese/furigana', JapaneseWeb())
+api.add_route('/english/ipa', EnglishWeb())
 
 api.add_route('/v1/japanese', JapaneseAPI())
 
