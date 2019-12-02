@@ -5,13 +5,13 @@ import jaconv
 from janome.tokenizer import Tokenizer
 
 
-class Phonetic:
+class Furigana:
     """Add tags of HTML by pronunciations of Kanji."""
     _has_instance = None
 
     def __new__(cls):
         if not cls._has_instance:
-            cls._has_instance = super(Phonetic, cls).__new__(cls)
+            cls._has_instance = super(Furigana, cls).__new__(cls)
             cls.__re_compile()
             cls.token = Tokenizer()
         return cls._has_instance

@@ -2,7 +2,7 @@ import csv
 from typing import Dict, List, Tuple
 
 
-class Phonetic:
+class IPA:
     """Add tags of HTML by pronunciations of English"""
 
     def __init__(self):
@@ -18,6 +18,7 @@ class Phonetic:
             # symbols[i][0]: Arpabet
             # symbols[i][1:]: IPA symbol
             symbols = [row for row in tsv_reader]
+            # The data is "'[\'&SYMBOL\']", I only use &SYMBOL. TODO: Refactoring it
             self.symbols: Dict[str, str] = {symbols[i][0]: str(symbols[i][1:]).lstrip("'[\'").rstrip("\']'") for i in range(len(symbols))}
 
     def export_html(self, text_post: str) -> str:
@@ -57,6 +58,7 @@ class Phonetic:
         """
         words: list = list()
 
+        # Remove non ascii characters
         for word in sentences.strip(";:,.-_").split():
             phonetics: str = self._convert_ipa(self.dict_data[word.lower()])
             words.append((word, phonetics))
