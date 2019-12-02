@@ -22,7 +22,7 @@ class IPA:
 
         with open('./src/english/dict/vowels', mode='r', newline='', encoding='utf-8') as f:
             tsv_reader = csv.reader(f, delimiter=' ')
-            self.vowels: List[str] = [vowel for vowel in tsv_reader]
+            self.vowels: Tuple[str] = [tuple(vowels) for vowels in tsv_reader][0]
 
     def export_html(self, text_post: str) -> str:
         """
@@ -62,10 +62,19 @@ class IPA:
         words: list = list()
 
         # Remove non ascii characters
-        for word in sentences.strip(";:,.-_").split():
-            phonetics: str = self._convert_ipa(self.dict_data[word.lower()])
+        is_after_vowel: bool = False
+        phonetics: str = ""
+        for word in reversed(sentences.split()):
+            target = word.strip(";:,.-_")
+            if target.lower() == "the" and is_after_vowel:
+                phonetics = "ðiː"
+                is_after_vowel = False
+            else:
+                phonetics = self._convert_ipa(self.dict_data[target.lower()])
+                if phonetics.startswith(self.vowels):
+                    is_after_vowel = True
             words.append((word, phonetics))
-
+        words.reverse()
         return words
 
     def _convert_ipa(self, arpabets: List[str]) -> str:
