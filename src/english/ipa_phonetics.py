@@ -64,12 +64,11 @@ class IPA:
 
         # Remove non ascii characters
         is_after_vowel: bool = False
-        phonetics: str = ""
+
         for sentence in sentences:
             sentence = reversed(sentence.split())
             for word in sentence:
-                word = word.replace("<br>", "\n")
-                target = word.strip(";:,.!?-_<>[]()|#\\\"\'\n")
+                target = word.strip(";:,.!?-_[]()|#\\\"\'")
                 if target == "":
                     phonetics = ""
                 elif target.lower() == "the" and is_after_vowel:
