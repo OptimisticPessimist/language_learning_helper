@@ -1,21 +1,11 @@
 import csv
-import re
 from typing import Dict, List, Tuple
 
 
 class IPA:
     """Add tags of HTML by pronunciations of English"""
 
-    _has_instance = None
-
-    def __new__(cls):
-        if not cls._has_instance:
-            cls._has_instance = super(IPA, cls).__new__(cls)
-            cls.__re_compile()
-        return cls._has_instance
-
     def __init__(self):
-        # Load words dictionary
         with open('./src/english/dict/cmudict', mode='r', newline='', encoding='utf-8') as f:
             tsv_reader = csv.reader(f, delimiter=' ')
             # read_data[i][0]: word
@@ -23,7 +13,6 @@ class IPA:
             read_data = [row for row in tsv_reader]
             self.dict_data: Dict[str, List[str]] = {read_data[i][0]: read_data[i][1:] for i in range(len(read_data))}
 
-        # Load IPA symbols
         with open('./src/english/dict/symbols', mode='r', newline='', encoding='utf-8') as f:
             tsv_reader = csv.reader(f, delimiter=' ')
             # symbols[i][0]: Arpabet
@@ -31,15 +20,9 @@ class IPA:
             symbols = [row for row in tsv_reader]
             self.symbols: Dict[str, str] = {symbols[i][0]: symbols[i][1:] for i in range(len(symbols))}
 
-        # Vowel's symbols for using to change phonetics of "the" before vowels
         with open('./src/english/dict/vowels', mode='r', newline='', encoding='utf-8') as f:
             tsv_reader = csv.reader(f, delimiter=' ')
             self.vowels: Tuple[str] = [tuple(vowels) for vowels in tsv_reader][0]
-
-    @classmethod
-    def __re_compile(cls) -> None:
-        """Regular expression patterns"""
-        cls.re_non_ascii = re.compile('[^a-zA-Z0-9\']')
 
     def export_html(self, text_post: str) -> str:
         """
@@ -72,37 +55,39 @@ class IPA:
         Convert text to list of originals and IPAs.
 
         Args:
-            sentence: List[str]: To convert a text
+            sentences: List[str]: To convert a text
 
         Returns:
             List[Tuple[str, str]: [(original word, IPA), ...]
         """
-        word_list: List[Tuple[str, str]] = list()
+        words: list = list()
+
+        # Remove non ascii characters
         is_after_vowel: bool = False
 
         for sentence in sentences:
-            # To check the vowels behind “The”, it processes from the reverse of sentence
-            for word in reversed(sentence.split()):
-                target = word.replace("<br>", "")
-                target = re.sub(self.re_non_ascii, "", target)
+            sentence = reversed(sentence.split())
+            for word in sentence:
+                target = word.strip(";:,.!?-_[]()|#\\\"\'")
                 if target == "":
-                    ipa = ""
+                    phonetics = ""
                 elif target.lower() == "the" and is_after_vowel:
-                    ipa = "ðiː"
+                    phonetics = "ðiː"
                     is_after_vowel = False
                 else:
                     try:
-                        ipa = self._convert_ipa(self.dict_data[target.lower()])
-                        if ipa.startswith(self.vowels):
+                        phonetics = self._convert_ipa(self.dict_data[target.lower()])
+                        if phonetics.startswith(self.vowels):
                             is_after_vowel = True
                         else:
                             is_after_vowel = False
-                    except KeyError as key:
-                        print(f"{key} is nothing in the CMU dictionary.")
-                        ipa = ""
-                word_list.append((word, ipa))
-            word_list.reverse()
-        return word_list
+                    except KeyError as e:
+                        print(f"KeyError: {e}")
+                        phonetics = ""
+                words.append((word, phonetics))
+            words.append(("<br>\n", ""))
+        words.reverse()
+        return words
 
     def _convert_ipa(self, arpabets: List[str]) -> str:
         """
@@ -125,10 +110,8 @@ class IPA:
         sentences: List[str] = list()
 
         for word, phonetics in word_list:
-            if "<br>" in word:
-                sentences.append(f'<ruby class="under">{word.replace("<br>", "")}<rp>[</rp><rt>{phonetics}</rt><rp>]</rp></ruby><br>\n')
-            elif phonetics is not "":
-                sentences.append(f'<ruby class="under">{word}<rp>[</rp><rt>{phonetics}</rt><rp>]</rp></ruby> ')
+            if phonetics is not "":
+                sentences.append(f'<ruby class="under">{word}<rp>(</rp><rt>{phonetics}</rt><rp>)</rp></ruby> ')
             else:
-                sentences.append(f"{word} ")
+                sentences.append(word)
         return sentences
