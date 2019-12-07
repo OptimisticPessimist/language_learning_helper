@@ -17,7 +17,7 @@ class JapaneseAPI:
         self.furigana = Furigana()
 
     async def on_post(self, req, resp) -> None:
-        data: object = await req.media()
+        data = await req.media()
         resp.media["success"] = "ok"
         resp.media["text"] = data['raw-text']
         resp.media["html"] = self.furigana.export_html(data['raw-text'])
@@ -28,7 +28,7 @@ class EnglishAPI:
         self.ipa = IPA()
 
     async def on_post(self, req, resp) -> None:
-        data: object = await req.media()
+        data = await req.media()
         resp.media["success"] = "ok"
         resp.media["text"] = data["raw-text"]
         resp.media["html"] = self.ipa.export_html(data["raw-text"])
@@ -102,8 +102,8 @@ api.add_route('', JapaneseWeb())
 api.add_route('/japanese/furigana', JapaneseWeb())
 api.add_route('/english/ipa', EnglishWeb())
 
-api.add_route('/v1/japanese', JapaneseAPI())
-api.add_route('/v1/english', EnglishAPI())
+# api.add_route('/v1/japanese', JapaneseAPI())
+# api.add_route('/v1/english', EnglishAPI())
 
 if __name__ == '__main__':
     from config import setting

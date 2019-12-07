@@ -45,7 +45,7 @@ class TestKana:
                              )
     # yapf: enable
     def test_fetch_characters(self, text, expected):
-        ruby = add_phonetic.Phonetic()
+        ruby = add_phonetic.Furigana()
         actual = ruby._fetch_characters(text)
         assert actual == expected
 
@@ -106,7 +106,7 @@ class TestKana:
                              )
     # yapf: enable
     def test_remove_ascii_and_hiragana(self, words, expected):
-        ruby = add_phonetic.Phonetic()
+        ruby = add_phonetic.Furigana()
         actual = ruby._remove_ascii_and_hiragana(words)
         assert actual == expected
 
@@ -125,6 +125,6 @@ class TestKana:
                             )
     # yapf: enable
     def test_put_on(self, words_list, expected):
-        ruby = add_phonetic.Phonetic()
+        ruby = add_phonetic.Furigana()
         actual = ruby._put_on(words_list)
         assert actual == expected

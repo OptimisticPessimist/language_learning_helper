@@ -1,5 +1,5 @@
 import re
-from typing import Any, List, Tuple, Union
+from typing import List, Tuple
 
 import jaconv
 from janome.tokenizer import Tokenizer
@@ -37,8 +37,8 @@ class Furigana:
                 line += word
         sentences.append(line)
 
-        fetch_char: List[Tuple[str]] = self._fetch_characters(sentences)
-        phonetic_list: List[Tuple[str]] = self._remove_ascii_and_hiragana(
+        fetch_char: List[Tuple[str, str]] = self._fetch_characters(sentences)
+        phonetic_list: List[Tuple[str, str]] = self._remove_ascii_and_hiragana(
             fetch_char)
         converted: List[str] = self._put_on(phonetic_list)
 
@@ -70,10 +70,10 @@ class Furigana:
         words: list = list()
         for token in tokens:
             words.append((token.surface, token.reading))
+
         return words
 
-    def _remove_ascii_and_hiragana(self, words: List[Tuple[str]]
-                                   ) -> List[Tuple[str]]:
+    def _remove_ascii_and_hiragana(self, words: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
         """
         Ascii and Hiragana aren't need pronunciation,
         So, this method are removing these.
@@ -88,7 +88,7 @@ class Furigana:
                     other  -> **None**
                 i.e. [(word, reading), ...]]
         """
-        new_words: list = list()
+        new_words: List[Tuple[str, str]] = list()
         for word, reading in words:
             if (re.search(self.re_kanji, word)
                     or re.search(self.re_zenkigou, word)):
@@ -97,13 +97,12 @@ class Furigana:
                 new_words.append((word, ""))
         return new_words
 
-    @classmethod
-    def _put_on(cls, words_list: List[Tuple[str]]) -> List[str]:
+    def _put_on(self, words_list: List[Tuple[str, str]]) -> List[str]:
         """
         Putting <ruby> tags on a text.
 
         Args:
-            words_list (List[Tuple[str]]): Phrases and pronunciations list
+            words_list (List[Tuple[str, str]]): Phrases and pronunciations list
                 e.g. [("囲碁", "いご"), ...]
         Returns:
             List[str]: Text with <ruby> tags
@@ -113,7 +112,7 @@ class Furigana:
         sentences: List[str] = list()
         for word, reading in words_list:
             # Extract extra ruby char from word
-            extra_char: list = re.findall(cls.re_hiragana, word)
+            extra_char: List[str] = re.findall(self.re_hiragana, word)
             for char in extra_char:
                 reading = reading.replace(char, "\u3000")
             if reading is not "":
