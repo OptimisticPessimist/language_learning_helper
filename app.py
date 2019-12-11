@@ -98,8 +98,9 @@ class EnglishWeb:
                                     converted_text=converted_text)
 
 
-api.add_route('/japanese/furigana', JapaneseWeb())
-api.add_route('/english/ipa', EnglishWeb())
+api.add_route('/', JapaneseWeb)
+api.add_route('/japanese/furigana', JapaneseWeb)
+api.add_route('/english/ipa', EnglishWeb)
 
 
 if __name__ == '__main__':
