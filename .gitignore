@@ -127,3 +127,4 @@ src/__pycache__/
 Pipfile.lock
 config/production.yaml
 config/development.yaml
+config/setting.py

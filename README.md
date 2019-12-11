@@ -15,7 +15,7 @@ And, how long does it take to do that?
 ## Dependency
 - python 3.7+
 
-## Useage
+## Usage
 First of all, comment out the settings `config/setting.py` other than those you want to use.
 
 e.g., You chose "development" mode
@@ -24,9 +24,9 @@ e.g., You chose "development" mode
 MODE = "development"
 # MODE = "test"
 ```
-This causes `app.py` to read the settings in the `config/production.yaml` file.
-Of course **you need to prepare the file with that name** in advance.
-`config/sample.yaml` is prepared as a sample it.
+This causes `app.py` to read the settings in the `config/development.yaml` file.
+Of course **you need to prepare the file with that name** in advance.  
+`config/sample_setting.yaml` is prepared as a sample it.
 
 To launch the app, enter the following command:
 ```bash
