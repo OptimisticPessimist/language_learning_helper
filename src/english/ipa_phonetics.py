@@ -36,6 +36,8 @@ class IPA:
             tsv_reader = csv.reader(f, delimiter=' ')
             self.vowels: Tuple[str] = [tuple(vowels) for vowels in tsv_reader][0]
 
+        self.is_after_vowel = False
+
     @classmethod
     def __re_compile(cls) -> None:
         """Regular expression patterns"""
@@ -78,26 +80,30 @@ class IPA:
         for sentence in sentences:
             # To check the vowels behind “The”, it processes from the reverse of sentence
             for word in reversed(sentence.split()):
-                target = word.replace("<br>", "")
-                target = re.sub(self.re_non_ascii, "", target)
-                if target == "":
-                    ipa = ""
-                elif target.lower() == "the" and is_after_vowel:
-                    ipa = "ðiː"
-                    is_after_vowel = False
-                else:
-                    try:
-                        ipa = self._convert_ipa(self.dict_data[target.lower()])
-                        if ipa.startswith(self.vowels):
-                            is_after_vowel = True
-                        else:
-                            is_after_vowel = False
-                    except KeyError as key:
-                        print(f"{key} is nothing in the CMU dictionary.")
-                        ipa = ""
-                word_list.append((word, ipa))
+                word_list.append(self._distinguish_the(word))
             word_list.reverse()
         return word_list
+
+    def _distinguish_the(self, word: str) -> Tuple[str, str]:
+        target = word.replace("<br>", "")
+        target = re.sub(self.re_non_ascii, "", target)
+
+        if target == "":
+            ipa = ""
+        elif target.lower() == "the" and self.is_after_vowel:
+            ipa = "ðiː"
+            self.is_after_vowel = False
+        else:
+            try:
+                ipa = self._convert_ipa(self.dict_data[target.lower()])
+                if ipa.startswith(self.vowels):
+                    self.is_after_vowel = True
+                else:
+                    self.is_after_vowel = False
+            except KeyError as key:
+                print(f"{key} is nothing in the CMU dictionary.")
+                ipa = ""
+        return word, ipa
 
     def _convert_ipa(self, arpabets: List[str]) -> str:
         """
