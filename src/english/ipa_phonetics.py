@@ -36,6 +36,7 @@ class IPA:
             tsv_reader = csv.reader(f, delimiter=' ')
             self.vowels: Tuple[str] = [tuple(vowels) for vowels in tsv_reader][0]
 
+        # In sentence, when after word is vowel, this value is True.
         self.is_after_vowel = False
 
     @classmethod
@@ -75,7 +76,6 @@ class IPA:
             List[Tuple[str, str]: [(original word, IPA), ...]
         """
         word_list: List[Tuple[str, str]] = list()
-        is_after_vowel: bool = False
 
         for sentence in sentences:
             # To check the vowels behind “The”, it processes from the reverse of sentence
