@@ -8,13 +8,13 @@ class IPA:
 
     _has_instance = None
 
-    def __new__(cls):
+    def __new__(cls) -> None:
         if not cls._has_instance:
             cls._has_instance = super(IPA, cls).__new__(cls)
             cls.__re_compile()
         return cls._has_instance
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Load words dictionary
         with open('./src/english/dict/cmudict', mode='r', newline='', encoding='utf-8') as f:
             tsv_reader = csv.reader(f, delimiter=' ')
@@ -71,7 +71,7 @@ class IPA:
         """
         Convert text to list of originals and IPAs.
         Args:
-            sentences: List[str]: To convert a text
+            sentences (List[str]): To convert a text
         Returns:
             List[Tuple[str, str]: [(original word, IPA), ...]
         """
@@ -85,6 +85,15 @@ class IPA:
         return word_list
 
     def _distinguish_the(self, word: str) -> Tuple[str, str]:
+        """
+        The word after "the" distinguished vowel or not vowel
+        If the word is vowel, the "the" phonetic's is "ðiː"
+        Args:
+            word (str): target word
+
+        Returns:
+            Tuple[str, str]: (word, phonetic)
+        """
         target = word.replace("<br>", "")
         target = re.sub(self.re_non_ascii, "", target)
 

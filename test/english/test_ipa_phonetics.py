@@ -1,7 +1,5 @@
-import sys
 import pytest
 
-sys.path.append('../../src')
 from src.english.ipa_phonetics import *
 
 

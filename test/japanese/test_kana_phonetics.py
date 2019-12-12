@@ -1,7 +1,5 @@
-import sys
 import pytest
 
-sys.path.append('../../src')
 import src.japanese.kana_phonetics as add_phonetic
 
 
