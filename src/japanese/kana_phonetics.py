@@ -115,7 +115,7 @@ class Furigana:
             extra_char: List[str] = re.findall(self.re_hiragana, word)
             for char in extra_char:
                 reading = reading.replace(char, "\u3000")
-            if reading is not "":
+            if reading != "":
                 sentences.append(
                     f"<ruby>{word}<rp>(</rp><rt>{reading}</rt><rp>)</rp></ruby>"
                 )

@@ -138,7 +138,7 @@ class IPA:
             if "<br>" in word:
                 sentences.append(f'<ruby class="under">{word.replace("<br>", "")}'
                                  f'<rp>[</rp><rt>{phonetics}</rt><rp>]</rp></ruby><br>\n')
-            elif phonetics is not "":
+            elif phonetics != "":
                 sentences.append(f'<ruby class="under">{word}'
                                  f'<rp>[</rp><rt>{phonetics}</rt><rp>]</rp></ruby> ')
             else:
