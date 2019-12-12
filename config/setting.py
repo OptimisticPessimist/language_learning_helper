@@ -1,3 +1,3 @@
-MODE = "production"
+# MODE = "production"
 # MODE = "development"
-# MODE = "test"
+MODE = "test"
