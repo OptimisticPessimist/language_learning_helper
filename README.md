@@ -5,7 +5,7 @@ The \<ruby\> tags are troublesome, aren't these?
 
 ### Japanese
 If we want to write 『<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby>を<ruby>読む<rp>(</rp><rt>よ　</rt><rp>)</rp></ruby>。』, we have to write the following code:
-```
+```html
 <ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby>を<ruby>読む<rp>(</rp><rt>よ　</rt><rp>)</rp></ruby>。
 ```
 If you want to write a long long sentence, How many tags do we need?  
