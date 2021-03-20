@@ -1,7 +1,7 @@
 h11==0.8.1
 jaconv==0.2.4
 Janome==0.3.9
-Jinja2==2.10.1
+Jinja2==2.11.3
 PyYAML==5.1.2
 regex==2019.8.19
 requests==2.22.0
