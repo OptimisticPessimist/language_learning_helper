@@ -16,7 +16,7 @@ class IPA:
 
     def __init__(self) -> None:
         # Load words dictionary
-        with open('./src/english/dict/cmudict', mode='r', newline='', encoding='utf-8') as f:
+        with open('./usecase/english/dict/cmudict', mode='r', newline='', encoding='utf-8') as f:
             tsv_reader = csv.reader(f, delimiter=' ')
             # read_data[i][0]: word
             # read_data[i][1:]: phonetics
@@ -24,7 +24,7 @@ class IPA:
             self.dict_data: Dict[str, List[str]] = {read_data[i][0]: read_data[i][1:] for i in range(len(read_data))}
 
         # Load IPA symbols
-        with open('./src/english/dict/symbols', mode='r', newline='', encoding='utf-8') as f:
+        with open('./usecase/english/dict/symbols', mode='r', newline='', encoding='utf-8') as f:
             tsv_reader = csv.reader(f, delimiter=' ')
             # symbols[i][0]: Arpabet
             # symbols[i][1:]: IPA symbol
@@ -32,7 +32,7 @@ class IPA:
             self.symbols: Dict[str, str] = {symbols[i][0]: symbols[i][1:] for i in range(len(symbols))}
 
         # Vowel's symbols for using to change phonetics of "the" before vowels
-        with open('./src/english/dict/vowels', mode='r', newline='', encoding='utf-8') as f:
+        with open('./usecase/english/dict/vowels', mode='r', newline='', encoding='utf-8') as f:
             tsv_reader = csv.reader(f, delimiter=' ')
             self.vowels: Tuple[str] = [tuple(vowels) for vowels in tsv_reader][0]
 

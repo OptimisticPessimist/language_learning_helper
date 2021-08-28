@@ -1,6 +1,6 @@
 import pytest
 
-import src.japanese.kana_phonetics as add_phonetic
+import usecase.japanese.kana_phonetics as add_phonetic
 
 
 class TestKana:

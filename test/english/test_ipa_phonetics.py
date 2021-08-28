@@ -1,6 +1,6 @@
 import pytest
 
-from src.english.ipa_phonetics import *
+from usecase.english.ipa_phonetics import *
 
 
 @pytest.mark.parametrize("sentence, expected", [

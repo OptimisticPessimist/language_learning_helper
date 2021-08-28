@@ -1,10 +1,10 @@
 from datetime import date, datetime
+from pathlib import Path
 
 import responder
 import yaml
 
-from src.english.ipa_phonetics import IPA
-from src.japanese.kana_phonetics import Furigana
+from presenters import api
 
 api = responder.API(
     templates_dir='static/templates',
@@ -14,13 +14,10 @@ api = responder.API(
 
 class JapaneseAPI:
     def __init__(self) -> None:
-        self.furigana = Furigana()
+        self.japanese_api = api.Japanese()
 
-    async def on_post(self, req, resp) -> None:
-        data = await req.media()
-        resp.media["success"] = "ok"
-        resp.media["text"] = data['raw-text']
-        resp.media["html"] = self.furigana.export_html(data['raw-text'])
+    def on_post(self, req, resp) -> None:
+        self.japanese_api.post(req, resp)
 
 
 class EnglishAPI:
@@ -29,7 +26,7 @@ class EnglishAPI:
 
     async def on_post(self, req, resp) -> None:
         data = await req.media()
-        resp.media["success"] = "ok"
+        resp.media["date"] = datetime.today()
         resp.media["text"] = data["raw-text"]
         resp.media["html"] = self.ipa.export_html(data["raw-text"])
 
@@ -46,8 +43,8 @@ class JapaneseWeb:
                                  converted_text=converted_text)
 
     async def on_post(self, req, resp) -> None:
-        data: object = await req.media(format='form')
-        raw_text: str = data['raw-text'].replace("<", "&lt").replace(">", "&gt")
+        data = await req.media(format='form')
+        raw_text = data['raw-text'].replace("<", "&lt").replace(">", "&gt")
         converted_text = self.furigana.export_html(raw_text)
 
         @api.background.task
@@ -110,6 +107,10 @@ if __name__ == '__main__':
         ENV = mode['ENV']
         SERVER = mode['SERVER']
         PORT = mode['PORT']
+
+    logs = Path('./logs')
+    if not logs.exists():
+        logs.mkdir(mode=0o644)
 
     print(f"Start in {ENV} mode...")
     api.run(address=SERVER, port=PORT)
